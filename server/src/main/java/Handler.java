@@ -13,7 +13,7 @@ public class Handler implements Runnable{
         return soket;
     }
     private final String SINCRONIZED_DIR = "server/root/syncronyzed/";
-    private byte[] buffer = new byte[1024];
+
 
     @Override
     public void run() {
@@ -46,10 +46,17 @@ public class Handler implements Runnable{
                 file.delete();
             }
             file.createNewFile();
-            String readed = is.readUTF();
+            String msg ="";
+            while (!msg.equals("{END}")){
+                int avaliable = is.readInt();
+                byte[] buffer = new byte[avaliable];
 
-                fileOutputStream.write(readed.getBytes(StandardCharsets.UTF_8));
+                is.readFully(buffer);
+                msg = is.readUTF();
+                fileOutputStream.write(buffer,0,avaliable);
                 fileOutputStream.flush();
+            }
+
 
             System.out.println("файл сохранён");
         }catch (Exception e){

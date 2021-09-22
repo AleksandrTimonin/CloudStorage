@@ -15,7 +15,7 @@ public class Controller implements Initializable {
     private DataOutputStream os;
     private DataInputStream is;
     private static final String FILES_FOLDER = "client/src/main/resources/files/";
-    private byte[] buffer = new byte[1024];
+
 
 
     public void send(ActionEvent event) throws IOException {
@@ -31,11 +31,11 @@ public class Controller implements Initializable {
 
             try(FileInputStream fis = new FileInputStream(file)){
                 int readed = 0;
-                while ((readed =fis.read(buffer)) != -1){
-
-                    os.write(buffer,0,readed);
-                    os.flush();
-                }
+                int avaliable = fis.available();
+                byte[] buffer = new byte[avaliable];
+                os.writeInt(avaliable);
+                os.write(buffer);
+                os.writeUTF("{END}");
                 System.out.println("передал файл");
             }catch (Exception e ){
                 e.printStackTrace();
